@@ -1,0 +1,6 @@
+.DS_Store
+.idea/
+*.iml
+tmp/
+.ruby-gemset
+.ruby-version
