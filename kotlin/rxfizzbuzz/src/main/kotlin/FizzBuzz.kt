@@ -1,17 +1,20 @@
 import io.reactivex.Observable
 
-fun fizzBuzz(range: IntRange): Observable<String> {
-    return Observable.fromIterable(range)
-            .map { n ->
-                when {
-                    isFizzable(n) && isBuzzable(n) -> "FizzBuzz"
-                    isFizzable(n) -> "Fizz"
-                    isBuzzable(n) -> "Buzz"
-                    else -> n.toString()
-                }
-            }
+fun Iterable<Int>.fizzBuzz(): Observable<String> {
+    return Observable.fromIterable(this)
+            .map { it.toFizzBuzz() }
+            .map { it.value }
 }
 
-private fun isBuzzable(n: Int) = n % 5 == 0
+data class FizzBuzz(val value: String)
 
-private fun isFizzable(n: Int) = n % 3 == 0
+fun Int.isFizzable() = this % 3 == 0
+
+fun Int.isBuzzable() = this % 5 == 0
+
+fun Int.toFizzBuzz(): FizzBuzz = when {
+    isFizzable() && isBuzzable() -> FizzBuzz("FizzBuzz")
+    isFizzable() -> FizzBuzz("Fizz")
+    isBuzzable() -> FizzBuzz("Buzz")
+    else -> FizzBuzz(toString())
+}

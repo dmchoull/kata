@@ -4,7 +4,7 @@ import org.jetbrains.spek.api.dsl.it
 
 internal class FizzBuzzTest : Spek({
     it("fizzes and buzzes") {
-        val fizzBuzzes = fizzBuzz(1..15)
+        val fizzBuzzes = (1..15).fizzBuzz()
 
         val testObserver = TestObserver<String>()
         fizzBuzzes.subscribe(testObserver)
