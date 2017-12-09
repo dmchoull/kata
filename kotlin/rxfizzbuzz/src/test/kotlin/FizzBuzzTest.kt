@@ -4,12 +4,12 @@ import org.jetbrains.spek.api.dsl.it
 
 internal class FizzBuzzTest : Spek({
     it("fizzes and buzzes") {
-        val fizzBuzzes = (1..15).fizzBuzz()
+        val fizzBuzzes = (0..15).fizzBuzz()
 
-        val testObserver = TestObserver<String>()
+        val testObserver = TestObserver<FizzBuzzed>()
         fizzBuzzes.subscribe(testObserver)
 
-        testObserver.assertValues("1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8",
-                "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz")
+        testObserver.assertValues(FizzBuzz(), Value("1"), Value("2"), Fizz(), Value("4"), Buzz(), Fizz(), Value("7"),
+                Value("8"), Fizz(), Buzz(), Value("11"), Fizz(), Value("13"), Value("14"), FizzBuzz())
     }
 })

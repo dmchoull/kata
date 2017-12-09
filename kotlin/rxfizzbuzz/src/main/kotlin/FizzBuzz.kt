@@ -1,20 +1,22 @@
 import io.reactivex.Observable
+import io.reactivex.ObservableSource
+import io.reactivex.ObservableTransformer
 
-fun Iterable<Int>.fizzBuzz(): Observable<String> {
-    return Observable.fromIterable(this)
-            .map { it.toFizzBuzz() }
-            .map { it.value }
+fun Iterable<Int>.fizzBuzz(): Observable<FizzBuzzed> = Observable.fromIterable(this).compose(FizzBuzzTransformer())
+
+class FizzBuzzTransformer : ObservableTransformer<Int, FizzBuzzed> {
+    override fun apply(upstream: Observable<Int>): ObservableSource<FizzBuzzed> {
+        return upstream.map {
+            when {
+                it.isFizzable() && it.isBuzzable() -> FizzBuzz()
+                it.isFizzable() -> Fizz()
+                it.isBuzzable() -> Buzz()
+                else -> Value(it.toString())
+            }
+        }
+    }
 }
-
-data class FizzBuzz(val value: String)
 
 fun Int.isFizzable() = this % 3 == 0
 
 fun Int.isBuzzable() = this % 5 == 0
-
-fun Int.toFizzBuzz(): FizzBuzz = when {
-    isFizzable() && isBuzzable() -> FizzBuzz("FizzBuzz")
-    isFizzable() -> FizzBuzz("Fizz")
-    isBuzzable() -> FizzBuzz("Buzz")
-    else -> FizzBuzz(toString())
-}
