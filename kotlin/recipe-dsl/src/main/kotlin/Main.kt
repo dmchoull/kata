@@ -5,15 +5,29 @@ fun recipe(name: String, define: Recipe.() -> Unit): String {
 }
 
 class Recipe(private val name: String) {
-    private val ingredients = mutableListOf<String>()
-    private val steps = mutableListOf<String>()
+    private val _ingredients = mutableListOf<String>()
+    private val _steps = mutableListOf<String>()
 
-    fun ingredient(name: String) {
-        ingredients.add(name)
+    fun ingredients(build: RecipeBuilder.() -> Unit) {
+        val builder = RecipeBuilder()
+        builder.build()
+        _ingredients.addAll(builder.getAll())
     }
 
-    fun step(instruction: String) {
-        steps.add(instruction)
+    fun steps(build: RecipeBuilder.() -> Unit) {
+        val builder = RecipeBuilder()
+        builder.build()
+        _steps.addAll(builder.getAll())
+    }
+
+    class RecipeBuilder {
+        private val _added: MutableList<String> = mutableListOf()
+
+        operator fun String.unaryPlus() {
+            _added.add(this)
+        }
+
+        fun getAll() = _added
     }
 
     override fun toString() = """
@@ -22,11 +36,11 @@ class Recipe(private val name: String) {
         |
         |Ingredients
         |-----------
-        |${ingredients.toBulletPoints()}
+        |${_ingredients.toBulletPoints()}
         |
         |Directions
         |----------
-        |${steps.toNumberedList()}
+        |${_steps.toNumberedList()}
     """.trimMargin()
 
     private fun <T> List<T>.toBulletPoints() = joinToString(separator = "\n") { " • $it" }

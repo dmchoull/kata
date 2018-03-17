@@ -1,15 +1,21 @@
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 
-internal class MainTest : Spek({
+class MainTest : Spek({
     on("a simple recipe") {
         it("returns the formatted recipe") {
             recipe("Chocolate Fondue") {
-                ingredient("Chocolate")
-                step("Melt it")
-            } `should equal` """
+                ingredients {
+                    +"Chocolate"
+                }
+
+                steps {
+                    +"Melt it"
+                }
+
+            } shouldEqual """
                 |Chocolate Fondue
                 |================
                 |
@@ -27,19 +33,23 @@ internal class MainTest : Spek({
     on("a recipe with multiple steps and ingredients") {
         it("returns the formatted recipe") {
             recipe("Mac and Cheese") {
-                ingredient("1 1/2 cups macaroni")
-                ingredient("6 ounces processed cheese, shredded")
-                ingredient("1/2 cup shredded Cheddar cheese")
-                ingredient("2 tablespoons heavy cream")
-                ingredient("salt to taste")
+                ingredients {
+                    +"1 1/2 cups macaroni"
+                    +"6 ounces processed cheese, shredded"
+                    +"1/2 cup shredded Cheddar cheese"
+                    +"2 tablespoons heavy cream"
+                    +"salt to taste"
+                }
 
-                step("Bring a large pot of lightly salted water to a boil.")
-                step("Add pasta and cook for 8 to 10 minutes or until al dente.")
-                step("Drain pasta.")
-                step("Return drained pasta to the pot. Mix in processed cheese, Cheddar cheese, and cream.")
-                step("Stir until cheeses melt.")
-                step("Sprinkle with salt.")
-            } `should equal` """
+                steps {
+                    +"Bring a large pot of lightly salted water to a boil."
+                    +"Add pasta and cook for 8 to 10 minutes or until al dente."
+                    +"Drain pasta."
+                    +"Return drained pasta to the pot. Mix in processed cheese, Cheddar cheese, and cream."
+                    +"Stir until cheeses melt."
+                    +"Sprinkle with salt."
+                }
+            } shouldEqual """
                 |Mac and Cheese
                 |==============
                 |
