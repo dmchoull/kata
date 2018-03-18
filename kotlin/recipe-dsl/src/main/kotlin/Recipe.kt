@@ -1,3 +1,5 @@
+import java.net.URI
+
 fun recipe(name: String, define: Recipe.() -> Unit): String {
     val recipe = Recipe(name)
     recipe.define()
@@ -7,27 +9,34 @@ fun recipe(name: String, define: Recipe.() -> Unit): String {
 class Recipe(private val name: String) {
     private val _ingredients = mutableListOf<String>()
     private val _steps = mutableListOf<String>()
+    private val _links = mutableListOf<Link>()
 
     fun ingredients(build: RecipeBuilder.() -> Unit) {
         val builder = RecipeBuilder()
         builder.build()
-        _ingredients.addAll(builder.getAll())
+        _ingredients.addAll(builder.items)
     }
 
     fun steps(build: RecipeBuilder.() -> Unit) {
         val builder = RecipeBuilder()
         builder.build()
-        _steps.addAll(builder.getAll())
+        _steps.addAll(builder.items)
     }
 
     class RecipeBuilder {
-        private val _added: MutableList<String> = mutableListOf()
+        val items: MutableList<String> = mutableListOf()
 
         operator fun String.unaryPlus() {
-            _added.add(this)
+            items.add(this)
         }
+    }
 
-        fun getAll() = _added
+    fun link(text: String) = Linker(text)
+
+    inner class Linker(private val text: String) {
+        infix fun to(url: String) {
+            _links.add(Link(text, URI.create(url)))
+        }
     }
 
     override fun toString() = """
@@ -41,10 +50,23 @@ class Recipe(private val name: String) {
         |Directions
         |----------
         |${_steps.toNumberedList()}
-    """.trimMargin()
+        |${_links.toSection("Links")}
+    """.trimMargin().trim()
 
     private fun <T> List<T>.toBulletPoints() = joinToString(separator = "\n") { " • $it" }
 
     private fun <T> List<T>.toNumberedList() =
             withIndex().joinToString(separator = "\n") { (index, step) -> " ${index + 1}) $step" }
+
+    private fun <T> List<T>.toSection(title: String): String {
+        return if (isEmpty()) {
+            ""
+        } else {
+            "\n$title\n-----\n${joinToString(separator = "\n")}\n"
+        }
+    }
+}
+
+data class Link(private val text: String, private val url: URI) {
+    override fun toString() = """<a href="$url">$text</a>"""
 }

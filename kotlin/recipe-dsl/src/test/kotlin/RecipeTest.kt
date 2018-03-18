@@ -72,4 +72,28 @@ class MainTest : Spek({
             """.trimMargin()
         }
     }
+
+    it("can add links to a recipe") {
+        recipe("Chocolate Fondue") {
+            ingredients { +"Chocolate" }
+            steps { +"Melt it" }
+
+            link("How to melt chocolate") to "https://www.youtube.com/watch?v=S20OLMrEmz8"
+        } shouldEqual """
+            |Chocolate Fondue
+            |================
+            |
+            |Ingredients
+            |-----------
+            | • Chocolate
+            |
+            |Directions
+            |----------
+            | 1) Melt it
+            |
+            |Links
+            |-----
+            |<a href="https://www.youtube.com/watch?v=S20OLMrEmz8">How to melt chocolate</a>
+        """.trimMargin()
+    }
 })
